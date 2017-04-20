@@ -48,19 +48,19 @@ const eventsMap = {
 };
 
 // (redux-beacon)
-const analyticsMetaReducer = createMetaReducer(eventsMap, GoogleAnalytics, { logger });
-// A meta reducer is just a function that takes in a reducer, and spits out
-// an augmented reducer
 
 const loggerMetaReducer = storeLogger();
-const isConnected = (state:IAppState) => {
+const isConnected = (state:boolean) => {
   console.log('isConnected')
   console.log(state)
-  return state.connected;
+  return state;
 };
 
 // pass in the connectivity selector as the first parameter
 const offlineStorage = offlineWeb(isConnected);
+const analyticsMetaReducer = createMetaReducer(eventsMap, GoogleAnalytics, { logger, offlineStorage });
+// A meta reducer is just a function that takes in a reducer, and spits out
+// an augmented reducer
 
 @NgModule({
   declarations: [
@@ -74,7 +74,7 @@ const offlineStorage = offlineWeb(isConnected);
     BrowserModule,
     IonicModule.forRoot(MyApp),
     StoreModule.provideStore({
-      connected: loggerMetaReducer(analyticsMetaReducer(connectReducer, offlineStorage)),
+      connected: loggerMetaReducer(analyticsMetaReducer(connectReducer)),
       location: navigateReducer,
     })
   ],
