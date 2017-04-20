@@ -51,8 +51,6 @@ const eventsMap = {
 
 const loggerMetaReducer = storeLogger();
 const isConnected = (state:boolean) => {
-  console.log('isConnected')
-  console.log(state)
   return state;
 };
 
