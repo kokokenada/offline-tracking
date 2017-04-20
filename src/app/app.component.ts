@@ -7,6 +7,7 @@ import { TabsPage } from '../pages/tabs/tabs';
 import {NAVIGATE} from '../store/navigation.store';
 import {IAppState} from '../store/app-state';
 import {Store} from '@ngrx/store';
+import {CONNECT, DISCONNECT} from '../store/connected.store';
 
 @Component({
   templateUrl: 'app.html'
@@ -32,6 +33,17 @@ export class MyApp {
           this.store.dispatch({type: NAVIGATE, payload: view.name});
         }
       )
+
+      window.addEventListener('offline', () => {
+        this.store.dispatch({
+          type: DISCONNECT
+        });
+      });
+      window.addEventListener('online', () => {
+        this.store.dispatch({
+          type: CONNECT
+        });
+      });
 
     });
   }
