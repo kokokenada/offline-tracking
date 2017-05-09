@@ -17,10 +17,12 @@ import { navigateReducer } from '../store/navigation.store';
 import { IAppState } from '../store/app-state';
 
 // redux-beacon
-import { GoogleAnalytics, Event, PageView } from 'redux-beacon/targets/google-analytics';
+import { GoogleAnalytics as GoogleAnalyticsRBGA, Event, PageView } from 'redux-beacon/targets/google-analytics';
+import { CordovaGoogleAnalytics as GoogleAnalyticsRBCGA } from 'redux-beacon/targets/cordova-google-analytics';
 import { logger } from 'redux-beacon/extensions/logger';
 import { createMetaReducer } from 'redux-beacon';
 import { offlineWeb } from 'redux-beacon/extensions/offline-web';
+import { GoogleAnalytics as GA_Ionic} from '@ionic-native/google-analytics';
 
 
 // (redux-beacon)
@@ -54,9 +56,12 @@ const isConnected = (state:boolean) => {
   return state;
 };
 
+declare let cordova;
+
 // pass in the connectivity selector as the first parameter
 const offlineStorage = offlineWeb(isConnected);
-const analyticsMetaReducer = createMetaReducer(eventsMap, GoogleAnalytics, { logger, offlineStorage });
+const analyticsMetaReducer = createMetaReducer(
+  eventsMap, typeof cordova ===  "undefined" ? GoogleAnalyticsRBGA : GoogleAnalyticsRBCGA, { logger, offlineStorage });
 // A meta reducer is just a function that takes in a reducer, and spits out
 // an augmented reducer
 
@@ -87,7 +92,8 @@ const analyticsMetaReducer = createMetaReducer(eventsMap, GoogleAnalytics, { log
   providers: [
     StatusBar,
     SplashScreen,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    GA_Ionic
   ]
 })
 export class AppModule {}
